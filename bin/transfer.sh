@@ -1,9 +1,27 @@
-#!/bin/sh
+#!/bin/bash
 
 
 
-# Start with common file
+### Start with common file
 . `dirname $0`/_common.sh
+
+
+
+### Define callback function
+HOST_CALLBACK="host_transfer"
+host_transfer() {
+    echo "transfering host"
+}
+
+
+
+### Loop through hosts
+loop_hosts $HOST_CALLBACK
+
+
+
+exit;
+
 
 
 
