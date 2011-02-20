@@ -1,0 +1,9 @@
+#!/bin/bash
+
+### WARNING
+### WARNING   This file must remain executable because it is used in the script with dot prefix.
+### WARNING
+
+# Directories and paths
+BACKUP_DIR="/var/backup"
+PID_DIR="/var/backup/run"
