@@ -38,7 +38,7 @@ if [ -e $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE.tmp/$FLAG_PREPARING ]; then
     _error "Already preparing by some other process"
 fi
 if [ -e $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE/$FLAG_PREPARED ]; then
-    _error "Already prepared"
+    _exit "  Already prepared"
 fi
 if [ -e $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE/$FLAG_PROCESSING ]; then
     _error "Already processing by some other process?"

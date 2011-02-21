@@ -17,6 +17,7 @@ CONFIG_FILE_LOCAL="`dirname $0`/../conf/local.conf"
 # Get quietness argument
 if [ "$1" == '-q' ] || [ "$1" == '--quiet' ]; then
     VERBOSE_OUTPUT="no"
+    shift
 else
     VERBOSE_OUTPUT="yes"
 fi
@@ -144,6 +145,15 @@ _error() {
     else
 	exit 127
     fi
+}
+
+
+
+### Exit with message and zero status
+_exit() {
+    _echo "$1"
+    remove_pid_file
+    exit 0
 }
 
 
