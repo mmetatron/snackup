@@ -31,7 +31,7 @@ host_verify() {
 	    echo "not a directory"
 	    return 3
 	fi
-	if [ ! -e $BACKUP_DIR/$HOST_NAME/$DATE_TODAY/$FLAG_COMPLETE.$MODULE ]; then
+	if [ ! -e $BACKUP_DIR/$HOST_NAME/$DATE_TODAY/$FLAG_COMPLETE_MODULE$MODULE ]; then
 	    echo "module flag not found"
 	    return 3
 	fi

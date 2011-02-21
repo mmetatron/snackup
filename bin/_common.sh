@@ -43,7 +43,7 @@ _echo_start() {
 
 
 
-# Inform about end time
+### Inform about end time
 _echo_stop() {
     _echo "Finishing at `date`"
 }
@@ -117,9 +117,33 @@ loop_hosts() {
 
 ### Pid file removal
 remove_pid_file() {
-    _echo -n "Removing pid file... "
     rm -f $PID_FILE
-    _echo "done."
+}
+
+
+
+### Check date format
+check_date() {
+    DATE_TO_CHECK="$1"
+    RES=`echo "$DATE_TO_CHECK" | grep -c '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$' | cat`
+    if [ "$RES" == "0" ]; then
+	return 1
+    else
+	return 0
+    fi
+}
+
+
+
+### Inform about end time
+_error() {
+    echo "ERROR: $1"
+    remove_pid_file
+    if [ "$2" != "" ]; then
+	exit $2
+    else
+	exit 127
+    fi
 }
 
 
@@ -144,10 +168,8 @@ PID_FILE="$PID_DIR/`basename $0`.pid"
 
 
 ### Check for stale process
-_echo -n "Writing pid to $PID_FILE... "
 if [ -e $PID_FILE ]; then
-    echo
-    echo "  WARNING: old pid file found - another backup transfer process exists?"
+    echo "WARNING: old pid file found - another backup transfer process exists?"
     OLDPID=`cat $PID_FILE`
     if [ "`psfind ^$OLDPID`" == "" ]; then
 	echo "  Process with pid $OLDPID from stale pidfile $PID_FILE does not exist - removing"
@@ -166,7 +188,6 @@ fi
 # Write own pid to file now
 PID=$$
 echo $PID > $PID_FILE
-_echo "done."
 
 ################################################################################
 ### END Pid file generation
