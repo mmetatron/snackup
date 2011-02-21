@@ -1,0 +1,12 @@
+#
+# hosts.conf
+#
+# File format description:
+# - empty lines and lines starting with '#' sign are ignored
+# - fields are separated by one or more tabs or spaces
+#
+# Fields:
+# hostname				IP:Port for SSH		modules (if not default)
+
+host1.example.org			1.2.3.1:2222
+host2.example.org			1.2.3.2:2223		fs home www

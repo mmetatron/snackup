@@ -1,0 +1,12 @@
+#
+# routers.conf
+#
+# File format description:
+# - empty lines and lines starting with '#' sign are ignored
+# - fields are separated by one or more tabs or spaces
+#
+# Fields:
+# Hostname		IP:Port for SSH		Username	Password 	Files to back up (if not default)
+
+rt-01.example.org	10.1.2.1:22		backup		backup
+rt-02.example.org	10.1.2.2:22		backup		backup		nvram:startup-config system:running-config
