@@ -1,1 +1,56 @@
-TODO ionice
+#!/bin/bash
+
+
+
+### Start with common file
+. `dirname $0`/_common.sh
+
+
+
+### Define callback function
+HOST_CALLBACK="host_prepare"
+host_prepare() {
+    _echo "HOST: $HOST_NAME"
+
+    # Check dir
+    if [ ! -e $BACKUP_DIR/$HOST_NAME ]; then
+        mkdir $BACKUP_DIR/$HOST_NAME
+    fi
+
+    # Try to prepare it
+    $INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TOMORROW
+    RES="$?"
+
+    if [ "$RES" != "0" ]; then
+	_error "Prepare script returned non-zero status"
+    fi
+
+    ### Check .prepared flag
+    if [ ! -e $BACKUP_DIR/$HOST_NAME/$DATE_TOMORROW/$FLAG_PREPARED ]; then
+        _error "Host flag '$FLAG_PREPARE' not found"
+    fi
+
+    return 0
+}
+
+
+
+### Loop through hosts
+loop_hosts $HOST_CALLBACK
+RETURN_VALUE=$?
+if [ "$RETURN_VALUE" == "0" ]; then
+    _echo "All hosts have been prepared correctly."
+else
+    _echo "WARNING: There were some errors during backup preparation process."
+    _echo "WARNING: Please inspect results manually."
+fi
+
+
+
+### Remove pid file
+remove_pid_file
+
+
+
+### Exit
+exit $RETURN_VALUE

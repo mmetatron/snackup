@@ -205,3 +205,28 @@ DATE_TOMORROW=`date --date='next day' +'%Y-%m-%d'`
 ################################################################################
 ### END Date variables
 ################################################################################
+
+
+
+################################################################################
+### Checks
+################################################################################
+
+### DIRs
+if [ ! -e $INSTALL_DIR ]; then
+    _error "Install directory does not exist: $INSTALL_DIR"
+fi
+if [ ! -d $INSTALL_DIR ]; then
+    _error "Not a directory: $INSTALL_DIR"
+fi
+
+if [ ! -e $BACKUP_DIR ]; then
+    _error "Backup directory does not exist: $BACKUP_DIR"
+fi
+if [ ! -d $BACKUP_DIR ]; then
+    _error "Not a directory: $BACKUP_DIR"
+fi
+
+################################################################################
+### END Checks
+################################################################################
