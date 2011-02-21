@@ -56,7 +56,7 @@ host_transfer() {
 	_echo ""
 	_echo "      ------[ START rsync output ]-----------------------------------"
 
-        CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l root -p $PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded $IP::$MODULE $BACKUP_DIR_CUR/$MODULE"
+        CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l root -p $PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded --numeric-ids $IP::$MODULE $BACKUP_DIR_CUR/$MODULE"
         #if [ "$VERBOSE_OUTPUT" != "yes" ]; then
     	    CMD="$CMD >> $BACKUP_DIR_CUR/.log.$MODULE 2>&1"
 	    _echo "      Saving log in file $BACKUP_DIR_CUR/.log.$MODULE"
@@ -82,7 +82,29 @@ host_transfer() {
     done
 
 
-    return 0
+    # Check if all modules have been processed successfuly
+    COMPLETE_FLAG_FILE="$BACKUP_DIR_CUR/$FLAG_COMPLETE"
+    if [ -e $COMPLETE_FLAG_FILE ]; then
+	_echo "  Backup complete, flag file exists: $COMPLETE_FLAG_FILE"
+	continue
+    fi
+
+    ALL_MODULES_DONE='1'
+    for MODULE in `echo $MODULES`; do
+	if [ ! -e $BACKUP_DIR_CUR/$FLAG_COMPLETE_MODULE$MODULE ]; then
+    	    ALL_MODULES_DONE='0'
+	fi
+    done
+    if [ "$ALL_MODULES_DONE" == "1" ]; then
+	_echo "  All modules processed correctly. Setting flag file: $COMPLETE_FLAG_FILE"
+	touch $COMPLETE_FLAG_FILE
+    else
+	_echo "  WARNING: Some modules failed to process correctly."
+	RETURN_VALUE='1'
+    fi
+
+
+    return $RETURN_VALUE
 }
 
 
