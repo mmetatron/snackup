@@ -28,7 +28,7 @@ host_transfer() {
     # Check if already complete
     if [ -e $BACKUP_DIR_CUR/$FLAG_COMPLETE ]; then
 	_echo "  Already complete."
-	continue
+	return 0
     fi
 
     if [ ! -e $BACKUP_DIR_CUR/$FLAG_PREPARED ]; then
