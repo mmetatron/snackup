@@ -116,6 +116,74 @@ loop_hosts() {
 
 
 
+### Main function - loop through routers
+loop_routers() {
+
+    # Check hosts file
+    if [ ! -e $ROUTERS_FILE ]; then
+	echo "ERROR: Routers file not found: $ROUTERS_FILE"
+	exit 1
+    fi
+
+
+    # Get number of hosts to backup
+    HOSTS_COUNT=`cat $ROUTERS_FILE | grep -v '^\s*$' | grep -v '^\s*#' | grep -c .`
+    RET_VAL=$?
+    if [ "$RET_VAL" != "0" ]; then
+	echo "ERROR: Unable to get number of routers to backup"
+	exit 1
+    fi
+    if [ "$HOSTS_COUNT" -lt "1" ]; then
+	echo "ERROR: No routers to backup?"
+	exit 1
+    fi
+
+
+    # Loop through the config file and parse it
+    FINAL_RETURN_VALUE='0'
+    #cat $HOSTS_FILE | grep -v '^\s*$' | grep -v '^\s*#' | sed -e 's/\s\+/ /g'| while read HOST_LINE; do
+    for i in `seq 1 $HOSTS_COUNT`; do
+
+	### Parse hosts line
+	HOST_LINE=`cat $ROUTERS_FILE | grep -v '^\s*$' | grep -v '^\s*#' | sed -e 's/\s\+/ /g' | head -n $i | tail -n 1`
+	HOST_NAME=`echo $HOST_LINE | cut -d ' ' -f 1`
+	IP_PORT=`echo $HOST_LINE | cut -d ' ' -f 2`
+	IP=`echo $IP_PORT | cut -d ':' -f 1`
+
+	SSH_USERNAME=`echo $HOST_LINE | cut -d ' ' -f 3`
+	SSH_PASSWORD=`echo $HOST_LINE | cut -d ' ' -f 4`
+
+	### Check if port is given
+	if [ "`echo $IP_PORT | grep ':'`" == "" ]; then
+	    PORT=$DEFAULT_SSH_PORT
+	elif [ "`echo $IP_PORT | grep -v ':\$'`" == "" ]; then
+	    PORT=$DEFAULT_SSH_PORT
+	else
+	    PORT=`echo $IP_PORT | cut -d ':' -f 2`
+	fi
+
+	### Parse modules
+	MODULES=$DEFAULT_ROUTER_FILES
+	SPECIFIC_MODULES=`echo $HOST_LINE | cut -d ' ' -f 5-`
+	if [ "$SPECIFIC_MODULES" != "" ]; then
+	    MODULES=$SPECIFIC_MODULES
+	fi
+
+	### Call callback function
+	$ROUTER_CALLBACK
+	RETURN_VALUE=$?
+
+	if [ "$RETURN_VALUE" != "0" ]; then
+	    FINAL_RETURN_VALUE=$RETURN_VALUE
+	fi
+    done
+
+    ### Return final return value
+    return $FINAL_RETURN_VALUE
+}
+
+
+
 ### Pid file removal
 remove_pid_file() {
     rm -f $PID_FILE
