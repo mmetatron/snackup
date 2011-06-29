@@ -70,6 +70,9 @@ host_transfer() {
         if [ "$RSYNC_RESULT" == "0" ]; then
 	    _echo "      Setting the $FLAG_COMPLETE_MODULE$MODULE flag"
 	    touch $BACKUP_DIR_CUR/$FLAG_COMPLETE_MODULE$MODULE
+	elif [ "$RSYNC_RESULT" == "24" ]; then
+	    _echo "      Setting the $FLAG_COMPLETE_MODULE$MODULE flag (some files vanished along the way)"
+	    touch $BACKUP_DIR_CUR/$FLAG_COMPLETE_MODULE$MODULE
 	else
 	    echo "      Error occured, see the log file $BACKUP_DIR_CUR/.log.$MODULE"
 	    RETURN_VALUE='1'
