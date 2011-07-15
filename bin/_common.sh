@@ -249,11 +249,12 @@ PID_FILE="$PID_DIR/`basename $0`.pid"
 if [ -e $PID_FILE ]; then
     echo "WARNING: old pid file found - another backup transfer process exists?"
     OLDPID=`cat $PID_FILE`
-    if [ "`psfind ^$OLDPID`" == "" ]; then
+    RES=`psfind "$OLDPID"`
+    if [ "$RES" == "" ]; then
 	echo "  Process with pid $OLDPID from stale pidfile $PID_FILE does not exist - removing"
 	rm $PID_FILE
     #FIXME regex
-    elif [ "`psfind ^$OLDPID | fgrep .sh`" == "" ]; then
+    elif [ "`psfind $OLDPID | fgrep .sh`" == "" ]; then
 	echo "  Process with pid $OLDPID is not a backup transfer process - removing stale pidfile"
 	rm $PID_FILE
     else
@@ -279,6 +280,7 @@ echo $PID > $PID_FILE
 
 DATE_TODAY=`date +'%Y-%m-%d'`
 DATE_TOMORROW=`date --date='next day' +'%Y-%m-%d'`
+DATE_YESTERDAY=`date --date='yesterday' +'%Y-%m-%d'`
 
 ################################################################################
 ### END Date variables

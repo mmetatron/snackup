@@ -49,6 +49,7 @@ host_verify() {
 
 
 ### Loop through hosts
+echo "Verifying backup transfer status for date $DATE_TODAY... "
 loop_hosts $HOST_CALLBACK
 RETURN_VALUE=$?
 if [ "$RETURN_VALUE" == "0" ]; then
