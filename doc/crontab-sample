@@ -3,5 +3,5 @@
 ###
 
 30 1-13 * * * /opt/scripts/backup-transfers/bin/transfer.sh > /dev/null 2>&1
-30 14   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/verify.sh"    "root@itsis.si"
-30 21   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/prepare.sh"   "root@itsis.si"
+30 14   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/verify.sh"    "root"
+30 21   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/prepare.sh"   "root"
