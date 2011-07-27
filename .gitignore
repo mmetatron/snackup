@@ -1,3 +1,5 @@
 /conf/local.conf
 /conf/hosts.conf
+/conf/hosts-purge.conf
 /conf/routers.conf
+/tmp/hosts-purge.sh*
