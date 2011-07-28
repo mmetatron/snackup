@@ -27,10 +27,11 @@ host_purge_generate() {
 
 
 
-### Remove old purge script if exists
+### Remove old purge script if exists and reinit it
 if [ -e $BACKUP_PURGE_SCRIPT_FILE ]; then
     rm $BACKUP_PURGE_SCRIPT_FILE
 fi
+echo "renice 20 -p \$\$" > $BACKUP_PURGE_SCRIPT_FILE
 
 
 
