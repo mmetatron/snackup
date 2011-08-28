@@ -13,16 +13,24 @@ host_transfer() {
     _echo "HOST: $HOST_NAME"
 
     # Check dirs and flags
-    if [ ! -e $BACKUP_DIR/$HOST_NAME ]; then
-        mkdir $BACKUP_DIR/$HOST_NAME
-    fi
+    BACKUP_DIR_HOST="$BACKUP_DIR/$HOST_NAME"
     BACKUP_DIR_CUR="$BACKUP_DIR/$HOST_NAME/$DATE_TODAY"
+    if [ ! -e $BACKUP_DIR/$HOST_NAME ]; then
 
-    if [ ! -e $BACKUP_DIR_CUR ]; then
-	$INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
-        if [ "$?" != "0" ]; then
-	    _error "Prepare script returned non-zero status"
+	# Create new dir and set .prepared flag
+        mkdir -p $BACKUP_DIR_CUR
+	touch $BACKUP_DIR_CUR/$FLAG_PREPARED
+
+    else
+
+	# Prepare if not yet prepared
+        if [ ! -e $BACKUP_DIR_CUR ]; then
+    	    $INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
+	    if [ "$?" != "0" ]; then
+		_error "Prepare script returned non-zero status"
+	    fi
 	fi
+
     fi
 
     # Check if already complete
