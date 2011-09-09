@@ -249,12 +249,12 @@ PID_FILE="$PID_DIR/`basename $0`.pid"
 if [ -e $PID_FILE ]; then
     echo "WARNING: old pid file found - another backup transfer process exists?"
     OLDPID=`cat $PID_FILE`
-    RES=`psfind "$OLDPID"`
+    RES=`ps ax | grep "$OLDPID" | grep -v "grep $OLDPID"`
     if [ "$RES" == "" ]; then
 	echo "  Process with pid $OLDPID from stale pidfile $PID_FILE does not exist - removing"
 	rm $PID_FILE
     #FIXME regex
-    elif [ "`psfind $OLDPID | fgrep .sh`" == "" ]; then
+    elif [ "`ps ax | grep "$OLDPID" | grep -v \"grep $OLDPID\" | fgrep .sh`" == "" ]; then
 	echo "  Process with pid $OLDPID is not a backup transfer process - removing stale pidfile"
 	rm $PID_FILE
     else
