@@ -7,6 +7,15 @@
 
 
 
+### For which date to prepare
+if [ "x$1" != "x" ]; then
+    DATE_TO_PREPARE_FOR="$1"
+else
+    DATE_TO_PREPARE_FOR="$DATE_TOMORROW"
+fi
+
+
+
 ### Define callback function
 HOST_CALLBACK="host_prepare"
 host_prepare() {
@@ -18,7 +27,7 @@ host_prepare() {
     fi
 
     # Try to prepare it
-    $INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TOMORROW
+    $INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TO_PREPARE_FOR
     RES="$?"
 
     if [ "$RES" != "0" ]; then
@@ -26,8 +35,8 @@ host_prepare() {
     fi
 
     ### Check .prepared flag
-    if [ ! -e $BACKUP_DIR/$HOST_NAME/$DATE_TOMORROW/$FLAG_PREPARED ]; then
-        _error "Host flag '$FLAG_PREPARE' not found"
+    if [ ! -e $BACKUP_DIR/$HOST_NAME/$DATE_TO_PREPARE_FOR/$FLAG_PREPARED ]; then
+        _error "Host flag '$FLAG_PREPARED' not found"
     fi
 
     return 0

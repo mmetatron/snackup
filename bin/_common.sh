@@ -2,18 +2,6 @@
 
 
 
-# Config file paths
-CONFIG_FILE_DEFAULT="`dirname $0`/../conf/default.conf"
-CONFIG_FILE_LOCAL="`dirname $0`/../conf/local.conf"
-
-
-
-# Read the config files
-. $CONFIG_FILE_DEFAULT
-. $CONFIG_FILE_LOCAL
-
-
-
 # Get quietness argument
 if [ "$1" == '-q' ] || [ "$1" == '--quiet' ]; then
     VERBOSE_OUTPUT="no"
@@ -219,10 +207,31 @@ _error() {
 
 ### Exit with message and zero status
 _exit() {
-    _echo "$1"
+    if [ "x$1" != "x" ]; then
+	_echo "$1"
+    fi
     remove_pid_file
     exit 0
 }
+
+
+
+################################################################################
+### Configurations
+################################################################################
+
+# Config file paths
+CONFIG_FILE_DEFAULT="`dirname $0`/../conf/default.conf"
+CONFIG_FILE_LOCAL="`dirname $0`/../conf/local.conf"
+
+
+
+# Read the config files
+. $CONFIG_FILE_DEFAULT
+if [ ! -e $CONFIG_FILE_LOCAL ]; then
+    _error "Local config file not found: $CONFIG_FILE_LOCAL"
+fi
+. $CONFIG_FILE_LOCAL
 
 
 

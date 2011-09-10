@@ -54,10 +54,10 @@ BACKUP_DATES=`ls $BACKUP_DIR/$HOST_NAME | grep '^[0-9][0-9][0-9][0-9]-[0-9][0-9]
 
 # If none
 if [ "$BACKUP_DATES" == "" ]; then
-    echo "WARNING: No previous backup found, creating new dir"
+    echo "  WARNING: No previous backup found, creating new dir for $DATE_PREPARE"
     mkdir $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE
     touch $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE/$FLAG_PREPARED
-    exit
+    _exit
 fi
 
 # Get latest complete
