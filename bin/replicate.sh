@@ -62,13 +62,24 @@ host_replicate() {
     fi
 
 
-    # Process the host
+    ### Source and destination locations
     REPLICATE_SRC=$REPLICATE_SOURCE_IP:$REPLICATE_SOURCE_DIR/$HOST_NAME/$DATE_TO_REPLICATE/
     REPLICATE_DEST=$BACKUP_DIR_CUR/content/
-    CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l root -p $REPLICATE_SOURCE_PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded --numeric-ids --exclude='.complete' $REPLICATE_SRC $REPLICATE_DEST"
+
+
+    ### Check if backup on source system is complete
+    scp -P$REPLICATE_SOURCE_PORT $REPLICATE_SRC/$FLAG_COMPLETE $REPLICATE_DEST
+    if [ "$?" != "0" ]; then
+	_echo "Backup not completed on source system."
+	return 1
+    fi
+
+
+    ### Process the host
+    CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l root -p $REPLICATE_SOURCE_PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded --numeric-ids $REPLICATE_SRC $REPLICATE_DEST"
     #if [ "$VERBOSE_OUTPUT" != "yes" ]; then
 	CMD="$CMD >> $BACKUP_DIR_CUR/.log.replication 2>&1"
-	_echo "      Saving log in file $BACKUP_DIR_CUR/.log.replication"
+	_echo "  Saving log in file $BACKUP_DIR_CUR/.log.replication"
     #fi
 
     #_echo "      Executing command: $CMD"

@@ -2,6 +2,12 @@
 ### Sample entries for backup-transfers in crontab
 ###
 
+### Transfers
 30 3-13 * * * /opt/scripts/backup-transfers/bin/transfer.sh > /dev/null 2>&1
 30 14   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/verify.sh"    "root"
 30 21   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/prepare.sh"   "root"
+
+### Replication
+30 5-13 * * * /opt/scripts/backup-transfers/bin/replicate.sh > /dev/null 2>&1
+30 14   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/replicate-verify.sh"    "root"
+30 19   * * * /opt/scripts/cron/run-and-mail-if-error.sh   "/opt/scripts/backup-transfers/bin/replicate-prepare.sh"   "root"
