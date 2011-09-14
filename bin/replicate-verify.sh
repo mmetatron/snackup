@@ -11,7 +11,7 @@
 if [ "x$1" != "x" ]; then
     DATE_TO_VERIFY="$1"
 else
-    DATE_TO_VERIFY="$DATE_TODAY"
+    DATE_TO_VERIFY="$DATE_YESTERDAY"
 fi
 
 
