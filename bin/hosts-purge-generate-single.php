@@ -192,10 +192,20 @@ if ($dirHandle === false) {
 /* This is the correct way to loop over the directory. */
 $availableInstances = array();
 $incompleteInstances = array();
+$dateYesterday = date('Y-m-d', time() - 86400);
+$dateToday     = date('Y-m-d');
+$dateTomorrow  = date('Y-m-d', time() + 86400);
+
 while (false !== ($file = readdir($dirHandle))) {
     if (($file == '.') || ($file == '..')) {
 	continue;
     }
+
+    // Skip yesterdays, todays and tomorrow's dirs
+    if (preg_match("/^$dateYesterday/", $file) || preg_match("/^$dateToday/", $file) || preg_match("/^$dateTomorrow/", $file)) {
+	continue;
+    }
+
     $flagFile = "$workDirectory/$file/.complete";
     if (!file_exists($flagFile)) {
 	$incompleteInstances[$file] = $file;
