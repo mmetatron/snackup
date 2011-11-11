@@ -1,2 +1,3 @@
 Add nice priority to purge and cleanup scripts
 Add replication scripts.
+Add timestamps to output, for logging purposes.
