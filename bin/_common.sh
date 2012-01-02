@@ -233,6 +233,10 @@ if [ ! -e $CONFIG_FILE_LOCAL ]; then
 fi
 . $CONFIG_FILE_LOCAL
 
+if [ ! -e $CONFIG_FILE_HOSTS_PURGE ]; then
+    _error "Local hosts purge config file not found: $CONFIG_FILE_HOSTS_PURGE"
+fi
+
 
 
 ################################################################################
