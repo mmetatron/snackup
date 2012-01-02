@@ -137,5 +137,13 @@ remove_pid_file
 
 
 
+### Start preparation process for next backup (TODO: make it configurable?)
+if [ "$RETURN_VALUE" == "0" ]; then
+    _echo "Starting preparation for next day..."
+    $INSTALL_DIR/bin/prepare.sh
+fi
+
+
+
 ### Exit
 exit $RETURN_VALUE
