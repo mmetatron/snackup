@@ -10,7 +10,7 @@
 ### Define callback function
 HOST_CALLBACK="host_transfer"
 host_transfer() {
-    _echo "HOST: $HOST_NAME"
+    _echo "HOST: $HOST_NAME ($IP)"
 
     # Check dirs and flags
     BACKUP_DIR_HOST="$BACKUP_DIR/$HOST_NAME"
