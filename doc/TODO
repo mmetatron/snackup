@@ -1,3 +1,56 @@
 Add nice priority to purge and cleanup scripts
 Add replication scripts.
 Add timestamps to output, for logging purposes.
+
+
+################################################################################
+#
+# Future rehaul
+#
+################################################################################
+
+In the future version, configuration should be done thorough object inheritance.
+Idea is a bit similar to nagios configuration syntax.
+
+### Configuration objects
+
+Transfer timetable object:
+- defines timetable at which backups are executed
+- retries
+Verification timetables
+- timetables for backup transfer verification
+- this is to prevent too frequent notifications if not too many backups fail
+
+Module/path list object:
+- which modules/paths are to be transferred
+
+Destinations:
+- destination paths where to store backups
+- FUTURE: set how many concurrent backup jobs can run on the same destination
+- FUTURE: set how many concurrent backup clone jobs can run on the same destination
+
+Retention policies:
+- how old backups are retained and/or deleted
+
+Hosts:
+- ips, access keys, ports, etc
+- hosts have these objects assigned:
+---> timetable
+---> modules
+---> destination
+---> retention policy
+- host inheritance should be supported (default host, with specific overrides)
+
+Additional settings:
+- concurrency (general, per destination, etc)
+- timeouts
+- less-than-a-day frequency (hour?)
+
+Replication settings:
+- replicate from backup host
+- replicate either all or specific list hosts
+- replicate hosts on certain remote destination
+
+
+
+Push based backups for road warriors.
