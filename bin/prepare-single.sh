@@ -60,32 +60,65 @@ if [ "$BACKUP_DATES" == "" ]; then
     _exit
 fi
 
-# Get latest complete
-BACKUP_DATE_TO_USE=""
+# Get latest completed
+LAST_COMPLETED_DATE=""
 for BACKUP_DATE in $BACKUP_DATES; do
     if [ -e $BACKUP_DIR/$HOST_NAME/$BACKUP_DATE/$FLAG_COMPLETE ]; then
-	BACKUP_DATE_TO_USE=$BACKUP_DATE
+	LAST_COMPLETED_DATE=$BACKUP_DATE
 	break
     fi
 done
 
-# If no complete, signal error
-if [ "$BACKUP_DATE_TO_USE" == "" ]; then
-    _error "No complete backup to use for preparation"
+# Get latest prepared
+LAST_PREPARED_DATE=""
+for BACKUP_DATE in $BACKUP_DATES; do
+    if [ -e $BACKUP_DIR/$HOST_NAME/$BACKUP_DATE/$FLAG_PREPARED ]; then
+	LAST_PREPARED_DATE=$BACKUP_DATE
+	break
+    fi
+done
+
+# If no complete or prepared, signal error
+if [ "$LAST_COMPLETED_DATE" == "" ]; then
+    if [ "$LAST_PREPARED_DATE" == "" ]; then
+        _error "No complete nor prepared backup to use for preparation"
+    fi
+fi
+
+# If latest prepared backup date is greater than complete date, use that instead
+if [ "$LAST_PREPARED_DATE" '>' "$LAST_COMPLETED_DATE" ]; then
+    PREPARATION_METHOD="move"
+    BACKUP_DATE_TO_USE="$LAST_PREPARED_DATE"
+else
+    PREPARATION_METHOD="hardlink"
+    BACKUP_DATE_TO_USE="$LAST_COMPLETED_DATE"
 fi
 
 
 
-### Do copy now to .tmp
+### Prepare destination directory paths
 BACKUP_DIR_LAST="$BACKUP_DIR/$HOST_NAME/$BACKUP_DATE_TO_USE"
 BACKUP_DIR_CUR_TMP="$BACKUP_DIR/$HOST_NAME/$DATE_PREPARE.tmp"
 BACKUP_DIR_CUR="$BACKUP_DIR/$HOST_NAME/$DATE_PREPARE"
 
-_echo "  Hard linking: "
-_echo "    from: $BACKUP_DIR_LAST"
-_echo "      to: $BACKUP_DIR_CUR_TMP"
-ionice -c3 cp -al $BACKUP_DIR_LAST $BACKUP_DIR_CUR_TMP
-_echo "    done."
+
+
+### Prepare by moving
+if [ "$PREPARATION_METHOD" == "move" ]; then
+    _echo "  Last backup is not complete, only prepared, let's move that: "
+    _echo "    from: $BACKUP_DIR_LAST"
+    _echo "      to: $BACKUP_DIR_CUR_TMP"
+    mv $BACKUP_DIR_LAST $BACKUP_DIR_CUR_TMP
+    _echo "    done."
+elif [ "$PREPARATION_METHOD" == "hardlink" ]; then
+    _echo "  Hard linking: "
+    _echo "    from: $BACKUP_DIR_LAST"
+    _echo "      to: $BACKUP_DIR_CUR_TMP"
+    ionice -c3 cp -al $BACKUP_DIR_LAST $BACKUP_DIR_CUR_TMP
+    _echo "    done."
+else
+    _error "Invalid preparation method: $PREPARATION_METHOD"
+fi
 
 _echo -n "  Removing flags and logs... "
 rm -f $BACKUP_DIR_CUR_TMP/.done.*
