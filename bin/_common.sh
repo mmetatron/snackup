@@ -70,17 +70,24 @@ loop_hosts() {
 	### Parse hosts line
 	HOST_LINE=`cat $HOSTS_FILE | grep -v '^\s*$' | grep -v '^\s*#' | sed -e 's/\s\+/ /g' | head -n $i | tail -n 1`
 	HOST_NAME=`echo $HOST_LINE | cut -d ' ' -f 1`
-	IP_PORT=`echo $HOST_LINE | cut -d ' ' -f 2`
-	IP=`echo $IP_PORT | cut -d ':' -f 1`
+        SSH_USER_IP_PORT=`echo $HOST_LINE | cut -d ' ' -f 2`
 
-	### Check if port is given
-	if [ "`echo $IP_PORT | grep ':'`" == "" ]; then
-	    PORT=$DEFAULT_SSH_PORT
-	elif [ "`echo $IP_PORT | grep -v ':\$'`" == "" ]; then
-	    PORT=$DEFAULT_SSH_PORT
-	else
-	    PORT=`echo $IP_PORT | cut -d ':' -f 2`
-	fi
+        ### Separate SSH parameters
+        if [ "`echo '$USER_IP_PORT' | grep '@' -c`" -gt "0" ]; then
+            SSH_USER=`echo $SSH_USER_IP_PORT | cut -d '@' -f 1`
+            SSH_IP_PORT=`echo $SSH_USER_IP_PORT | cut -d '@' -f 2`
+        else
+            SSH_USER="$DEFAULT_SSH_USER"
+            SSH_IP_PORT="$SSH_USER_IP_PORT"
+        fi
+
+        if [ "`echo '$SSH_IP_PORT' | grep ':' -c`" -gt "0" ]; then
+            PORT=`echo $SSH_IP_PORT | cut -d ':' -f 2`
+            IP=`echo $SSH_IP_PORT | cut -d ':' -f 1`
+        else
+            PORT=$DEFAULT_SSH_PORT
+            IP="$SSH_IP_PORT"
+        fi
 
 	### Parse modules
 	MODULES=$DEFAULT_RSYNC_MODULES

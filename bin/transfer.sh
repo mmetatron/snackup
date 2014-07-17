@@ -64,7 +64,7 @@ host_transfer() {
 	_echo ""
 	_echo "      ------[ START rsync output ]-----------------------------------"
 
-        CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l root -p $PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded --numeric-ids $IP::$MODULE $BACKUP_DIR_CUR/$MODULE"
+        CMD="$PATH_RSYNC -e '$PATH_SSH -o PasswordAuthentication=no -l $SSH_USER -p $PORT' --rsync-path=$PATH_RSYNC -avz --delete --delete-excluded --numeric-ids $IP::$MODULE $BACKUP_DIR_CUR/$MODULE"
         #if [ "$VERBOSE_OUTPUT" != "yes" ]; then
     	    CMD="$CMD >> $BACKUP_DIR_CUR/.log.$MODULE 2>&1"
 	    _echo "      Saving log in file $BACKUP_DIR_CUR/.log.$MODULE"
