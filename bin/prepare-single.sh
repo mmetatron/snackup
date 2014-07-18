@@ -50,12 +50,12 @@ fi
 
 
 ### Find previous backup to copy from
-BACKUP_DATES=`ls $BACKUP_DIR/$HOST_NAME | grep '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$' | sort -r`
+BACKUP_DATES=`$DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-list.sh "$BACKUP_DIR" "$HOST_NAME"`
 
 # If none
 if [ "$BACKUP_DATES" == "" ]; then
     echo "  WARNING: No previous backup found, creating new dir for $DATE_PREPARE"
-    mkdir $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE
+    $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-prepare-new.sh "$BACKUP_DIR" "$HOST_NAME" "$DATE_PREPARE"
     touch $BACKUP_DIR/$HOST_NAME/$DATE_PREPARE/$FLAG_PREPARED
     _exit
 fi
@@ -64,8 +64,8 @@ fi
 LAST_COMPLETED_DATE=""
 for BACKUP_DATE in $BACKUP_DATES; do
     if [ -e $BACKUP_DIR/$HOST_NAME/$BACKUP_DATE/$FLAG_COMPLETE ]; then
-	LAST_COMPLETED_DATE=$BACKUP_DATE
-	break
+        LAST_COMPLETED_DATE=$BACKUP_DATE
+        break
     fi
 done
 
@@ -73,8 +73,8 @@ done
 LAST_PREPARED_DATE=""
 for BACKUP_DATE in $BACKUP_DATES; do
     if [ -e $BACKUP_DIR/$HOST_NAME/$BACKUP_DATE/$FLAG_PREPARED ]; then
-	LAST_PREPARED_DATE=$BACKUP_DATE
-	break
+        LAST_PREPARED_DATE=$BACKUP_DATE
+        break
     fi
 done
 
@@ -90,7 +90,7 @@ if [ "$LAST_PREPARED_DATE" '>' "$LAST_COMPLETED_DATE" ]; then
     PREPARATION_METHOD="move"
     BACKUP_DATE_TO_USE="$LAST_PREPARED_DATE"
 else
-    PREPARATION_METHOD="hardlink"
+    PREPARATION_METHOD="clone"
     BACKUP_DATE_TO_USE="$LAST_COMPLETED_DATE"
 fi
 
@@ -108,13 +108,13 @@ if [ "$PREPARATION_METHOD" == "move" ]; then
     _echo "  Last backup is not complete, only prepared, let's move that: "
     _echo "    from: $BACKUP_DIR_LAST"
     _echo "      to: $BACKUP_DIR_CUR_TMP"
-    mv $BACKUP_DIR_LAST $BACKUP_DIR_CUR_TMP
+    $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-prepare-move.sh "$BACKUP_DIR" "$HOST_NAME" "$BACKUP_DATE_TO_USE" "$DATE_PREPARE.tmp"
     _echo "    done."
-elif [ "$PREPARATION_METHOD" == "hardlink" ]; then
-    _echo "  Hard linking: "
+elif [ "$PREPARATION_METHOD" == "clone" ]; then
+    _echo "  Cloning: "
     _echo "    from: $BACKUP_DIR_LAST"
     _echo "      to: $BACKUP_DIR_CUR_TMP"
-    ionice -c3 cp -al $BACKUP_DIR_LAST $BACKUP_DIR_CUR_TMP
+    $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-prepare-clone.sh "$BACKUP_DIR" "$HOST_NAME" "$BACKUP_DATE_TO_USE" "$DATE_PREPARE.tmp"
     _echo "    done."
 else
     _error "Invalid preparation method: $PREPARATION_METHOD"
@@ -129,7 +129,7 @@ rm -f $BACKUP_DIR_CUR_TMP/.complete*
 _echo "done."
 
 _echo -n "  Moving to final location and setting flag... "
-mv $BACKUP_DIR_CUR_TMP $BACKUP_DIR_CUR
+$DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-prepare-move.sh "$BACKUP_DIR" "$HOST_NAME" "$DATE_PREPARE.tmp" "$DATE_PREPARE"
 touch $BACKUP_DIR_CUR/$FLAG_PREPARED
 _echo "done."
 

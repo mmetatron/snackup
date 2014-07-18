@@ -224,13 +224,12 @@ _exit() {
 
 
 ################################################################################
-### Configurations
+### Configuration
 ################################################################################
 
 # Config file paths
-CONFIG_FILE_DEFAULT="`dirname $0`/../conf/default.conf"
-CONFIG_FILE_LOCAL="`dirname $0`/../conf/local.conf"
-
+CONFIG_FILE_DEFAULT="`dirname $BASH_SOURCE`/../conf/default.conf"
+CONFIG_FILE_LOCAL="`dirname $BASH_SOURCE`/../conf/local.conf"
 
 
 # Read the config files
@@ -245,48 +244,59 @@ if [ ! -e $CONFIG_FILE_HOSTS_PURGE ]; then
 fi
 
 
+# Prepare paths too
+DIR_APP_ROOT="`dirname $0`/.."
+DIR_APP_BIN="$DIR_APP_ROOT/bin"
+DIR_APP_DRIVER="$DIR_APP_ROOT/bin/driver"
+DIR_APP_DRIVER_STORAGE="$DIR_APP_ROOT/bin/driver/storage"
+
+
 
 ################################################################################
 ### Pid file generation
 ################################################################################
 
-### Check pid directory
-if [ -e $PID_DIR ]; then
-    if [ ! -d $PID_DIR ]; then
-	echo "ERROR Pid directory is not a directory: $PID_DIR"
-	exit 1
-    fi
-else
-    mkdir $PID_DIR
-fi
-
-
-### Get pid file name
-PID_FILE="$PID_DIR/`basename $0`.pid"
-
-
-### Check for stale process
-if [ -e $PID_FILE ]; then
-    echo "WARNING: old pid file found - another backup transfer process exists?"
-    OLDPID=`cat $PID_FILE`
-    RES=`ps ax | grep "$OLDPID" | grep -v "grep $OLDPID"`
-    if [ "$RES" == "" ]; then
-	echo "  Process with pid $OLDPID from stale pidfile $PID_FILE does not exist - removing"
-	rm $PID_FILE
-    #FIXME regex
-    elif [ "`ps ax | grep "$OLDPID" | grep -v \"grep $OLDPID\" | fgrep .sh`" == "" ]; then
-	echo "  Process with pid $OLDPID is not a backup transfer process - removing stale pidfile"
-	rm $PID_FILE
+if [ "$PROCESS_PIDFILE_SKIP" != "1" ]; then
+    ### Check pid directory
+    if [ -e $PID_DIR ]; then
+        if [ ! -d $PID_DIR ]; then
+            echo "ERROR Pid directory is not a directory: $PID_DIR"
+            exit 1
+        fi
     else
-	_echo "    Yes, exiting..."
-	exit 1
+        mkdir $PID_DIR
     fi
+
+
+    ### Get pid file name
+    PID_FILE="$PID_DIR/`basename $0`.pid"
+
+
+    ### Check for stale process
+    if [ -e $PID_FILE ]; then
+        echo "WARNING: old pid file found - another backup transfer process exists?"
+        OLDPID=`cat $PID_FILE`
+        RES=`ps ax | grep "$OLDPID" | grep -v "grep $OLDPID"`
+        if [ "$RES" == "" ]; then
+            echo "  Process with pid $OLDPID from stale pidfile $PID_FILE does not exist - removing"
+            rm $PID_FILE
+        #FIXME regex
+        elif [ "`ps ax | grep "$OLDPID" | grep -v \"grep $OLDPID\" | fgrep .sh`" == "" ]; then
+            echo "  Process with pid $OLDPID is not a backup transfer process - removing stale pidfile"
+            rm $PID_FILE
+        else
+            _echo "    Yes, exiting..."
+            exit 1
+        fi
+    fi
+
+
+    # Write own pid to file now
+    PID=$$
+    echo $PID > $PID_FILE
 fi
 
 
-# Write own pid to file now
-PID=$$
-echo $PID > $PID_FILE
 
 ################################################################################
 ### END Pid file generation

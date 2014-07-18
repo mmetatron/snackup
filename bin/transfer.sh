@@ -15,40 +15,39 @@ host_transfer() {
     # Check dirs and flags
     BACKUP_DIR_HOST="$BACKUP_DIR/$HOST_NAME"
     BACKUP_DIR_CUR="$BACKUP_DIR/$HOST_NAME/$DATE_TODAY"
-    if [ ! -e $BACKUP_DIR/$HOST_NAME ]; then
+    if [ ! -e $BACKUP_DIR_HOST ]; then
 
-	# Create new dir and set .prepared flag
-        mkdir -p $BACKUP_DIR_CUR
-	touch $BACKUP_DIR_CUR/$FLAG_PREPARED
+        $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-location-create.sh "$BACKUP_DIR" "$HOST_NAME" &&
+        $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-prepare-new.sh "$BACKUP_DIR" "$HOST_NAME" "$DATE_TODAY" &&
+        touch $BACKUP_DIR_CUR/$FLAG_PREPARED
 
     else
 
-	# Prepare if not yet prepared
         if [ ! -e $BACKUP_DIR_CUR ]; then
-    	    $INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
-	    if [ "$?" != "0" ]; then
-		_error "Prepare script returned non-zero status"
-	    fi
-	fi
-
+            $DIR_APP_BIN/prepare-single.sh $HOST_NAME $DATE_TODAY
+            if [ "$?" != "0" ]; then
+                _error "Prepare script returned non-zero status"
+            fi
+        fi
     fi
+
 
     # Check if already complete
     if [ -e $BACKUP_DIR_CUR/$FLAG_COMPLETE ]; then
-	_echo "  Already complete."
-	return 0
+        _echo "  Backup already complete."
+        return 0
     fi
 
     if [ ! -e $BACKUP_DIR_CUR/$FLAG_PREPARED ]; then
-	$INSTALL_DIR/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
+        $DIR_APP_BIN/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
         if [ "$?" != "0" ]; then
-	    _error "Prepare script returned non-zero status"
-	fi
+            _error "Prepare script returned non-zero status"
+        fi
     fi
 
     ### Check .prepared flag
     if [ ! -e $BACKUP_DIR_CUR/$FLAG_PREPARED ]; then
-	_error "Unable to prepare for $HOST_NAME for $DATE_TODAY - flat $FLAG_PREPARE not found"
+        _error "Unable to prepare for $HOST_NAME for $DATE_TODAY - flag $FLAG_PREPARE not found"
     fi
 
 

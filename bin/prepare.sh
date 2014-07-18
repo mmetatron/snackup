@@ -21,9 +21,9 @@ HOST_CALLBACK="host_prepare"
 host_prepare() {
     _echo "HOST: $HOST_NAME"
 
-    # Check dir
+    # Check host backup location
     if [ ! -e $BACKUP_DIR/$HOST_NAME ]; then
-        mkdir $BACKUP_DIR/$HOST_NAME
+        $DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-location-create.sh "$BACKUP_DIR" "$HOST_NAME"
     fi
 
     # Try to prepare it
