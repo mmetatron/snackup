@@ -73,7 +73,7 @@ loop_hosts() {
         SSH_USER_IP_PORT=`echo $HOST_LINE | cut -d ' ' -f 2`
 
         ### Separate SSH parameters
-        if [ "`echo '$USER_IP_PORT' | grep '@' -c`" -gt "0" ]; then
+        if [ "`echo $SSH_USER_IP_PORT | grep '@' -c`" -gt "0" ]; then
             SSH_USER=`echo $SSH_USER_IP_PORT | cut -d '@' -f 1`
             SSH_IP_PORT=`echo $SSH_USER_IP_PORT | cut -d '@' -f 2`
         else
@@ -81,7 +81,7 @@ loop_hosts() {
             SSH_IP_PORT="$SSH_USER_IP_PORT"
         fi
 
-        if [ "`echo '$SSH_IP_PORT' | grep ':' -c`" -gt "0" ]; then
+        if [ "`echo $SSH_IP_PORT | grep ':' -c`" -gt "0" ]; then
             PORT=`echo $SSH_IP_PORT | cut -d ':' -f 2`
             IP=`echo $SSH_IP_PORT | cut -d ':' -f 1`
         else
