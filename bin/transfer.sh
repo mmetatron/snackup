@@ -84,11 +84,6 @@ host_transfer() {
 	    echo "      Error occured, see the log file $BACKUP_DIR_CUR/.log.$MODULE"
 	    RETURN_VALUE='1'
 	fi
-
-	# Sync the disks after each module is processed
-	_echo -n "      Syncing the disks... "
-	sync
-        _echo "done."
     done
 
 

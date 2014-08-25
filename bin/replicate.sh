@@ -97,11 +97,6 @@ host_replicate() {
 	RETURN_VALUE='1'
     fi
 
-    # Sync the disks after each host is processed
-    _echo -n "      Syncing the disks... "
-    sync
-    _echo "done."
-
     return $RETURN_VALUE
 }
 

@@ -92,12 +92,6 @@ router_transfer() {
     fi
 
 
-    # Sync the disks after each router
-    _echo -n "  Syncing the disks... "
-    sync
-    _echo "done."
-
-
     # Compare startup and running config
     RES=`diff "$BACKUP_DIR_CUR/nvram:startup-config" "$BACKUP_DIR_CUR/system:running-config" -I '^ntp clock-period [0-9]\+$' -I '^! No configuration change since last restart$' -I '^! Last configuration change at ' -I '^! NVRAM config last updated at ' | grep -c . | cat`
     if [ "$RES" != "0" ]; then
