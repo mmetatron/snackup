@@ -297,21 +297,21 @@ foreach ($availableInstances as $instanceDate) {
 
 
 // Output
-echo "### Keep these instances:\n";
+echo "### Keep these instances\n";
 foreach ($instancesToKeepReal as $instanceDate) {
-    echo "# $instanceDate:\n";
+    echo "# $instanceDate\n";
 }
 echo "\n";
 
-echo "### Delete these instances:\n";
+echo "### Delete these instances\n";
 foreach ($instancesToDeleteReal as $instanceDate) {
-    echo "rm -rf $workDirectory/$instanceDate\n";
+    echo "$instanceDate\n";
 }
 echo "\n";
 
-echo "### Delete these instances (incomplete backups):\n";
+echo "### Delete these instances (incomplete backups)\n";
 foreach ($incompleteInstances as $instanceDate) {
-    echo "rm -rf $workDirectory/$instanceDate\n";
+    echo "$instanceDate\n";
 }
 echo "\n";
 

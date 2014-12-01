@@ -22,7 +22,12 @@ host_purge_generate() {
         return 2
     fi
 
-    `dirname $0`/hosts-purge-generate-single.php $BACKUP_DIR/$HOST_NAME >> $BACKUP_PURGE_SCRIPT_FILE
+    `dirname $0`/hosts-purge-generate-single.php $BACKUP_DIR/$HOST_NAME \
+    | grep -Ev '^#' \
+    | grep -Ev '#.*$' \
+    | grep -Ev '^ *$' \
+    | sed -e "s#^#$DIR_APP_DRIVER_STORAGE/$BACKUP_DIR_STORAGE_DRIVER/host-backup-instance-remove.sh   $BACKUP_DIR   $HOST_NAME   #" \
+    >> $BACKUP_PURGE_SCRIPT_FILE
 }
 
 
