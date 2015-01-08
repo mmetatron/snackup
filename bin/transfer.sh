@@ -39,7 +39,7 @@ host_transfer() {
     fi
 
     if [ ! -e $BACKUP_DIR_CUR/$FLAG_PREPARED ]; then
-        $DIR_APP_BIN/bin/prepare-single.sh $HOST_NAME $DATE_TODAY
+        $DIR_APP_BIN/prepare-single.sh $HOST_NAME $DATE_TODAY
         if [ "$?" != "0" ]; then
             _error "Prepare script returned non-zero status"
         fi
